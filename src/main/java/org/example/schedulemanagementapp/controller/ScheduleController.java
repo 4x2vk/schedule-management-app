@@ -22,4 +22,9 @@ public class ScheduleController {
     public List<ScheduleResponseDto> getMembers(@RequestParam(required = false) String name) {
         return scheduleService.findAll(name);
     }
+
+    @GetMapping("/schedule/{id}")
+    public ScheduleResponseDto getMember(@PathVariable Long id) {
+        return scheduleService.findById(id);
+    }
 }

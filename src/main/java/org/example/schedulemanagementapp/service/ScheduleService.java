@@ -5,8 +5,10 @@ import org.example.schedulemanagementapp.dto.ScheduleRequestDto;
 import org.example.schedulemanagementapp.dto.ScheduleResponseDto;
 import org.example.schedulemanagementapp.entity.Schedule;
 import org.example.schedulemanagementapp.repository.ScheduleRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -51,5 +53,20 @@ public class ScheduleService {
                         schedule.getModifiedAt()))
                 .sorted(Comparator.comparing(ScheduleResponseDto::getModifiedAt).reversed())
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ScheduleResponseDto findById(Long id) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Schedule with id %d not found", id)));
+
+        return new ScheduleResponseDto(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContents(),
+                schedule.getName(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
     }
 }
